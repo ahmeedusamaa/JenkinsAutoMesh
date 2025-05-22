@@ -36,9 +36,9 @@ I designed this architecture with **security-first principles**, isolating criti
 - Jenkins
 - Ansible
 - Docker
-- AWS EC2 (Public + Private Subnets)
+- AWS EC2 
 - GitHub Webhooks
-- Terraform (planned for future IaC implementation)
+- Terraform 
 
 ---
 
