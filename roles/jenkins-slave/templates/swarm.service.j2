@@ -1,0 +1,24 @@
+[Unit]
+Description=Jenkins Swarm Client
+After=network.target
+
+[Service]
+User=jenkins
+Group=jenkins
+ExecStart=/usr/bin/java -jar /home/jenkins/swarm-client.jar \
+    -master http://{{ jenkins_master_host }}:8080 \
+    -username {{ jenkins_username }} \
+    -password {{ jenkins_password }} \
+    -name {{ ansible_hostname }} \
+    -executors {{ jenkins_executors | default(2) }} \
+    -labels "{{ jenkins_labels | default('swarm') }}" \
+    -mode {{ jenkins_mode | default('normal') }} \
+    -retry 5 \
+    -webSocket \
+    -workDir /home/jenkins/workspace
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target 

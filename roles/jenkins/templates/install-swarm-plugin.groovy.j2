@@ -1,0 +1,27 @@
+import jenkins.model.*
+import hudson.model.*
+import jenkins.install.*
+
+def instance = Jenkins.getInstance()
+def pm = instance.getPluginManager()
+def uc = instance.getUpdateCenter()
+
+// Wait for update center to be ready
+uc.updateAllSites()
+
+// Install Swarm plugin
+def plugin = pm.getPlugin('swarm')
+if (!plugin) {
+    def pluginName = 'swarm'
+    def pluginVersion = '3.44'
+    def pluginId = "${pluginName}:${pluginVersion}"
+    
+    def future = uc.install([pluginId])
+    while(!future.isDone()) {
+        sleep(1000)
+    }
+    
+    // Restart Jenkins after plugin installation
+    instance.save()
+    instance.doSafeRestart()
+} 

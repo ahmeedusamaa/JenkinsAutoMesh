@@ -1,0 +1,14 @@
+---
+# defaults file for jenkins-slave
+
+# Jenkins master host
+jenkins_master_host: "{{ hostvars[groups['master'][0]]['ansible_host'] }}"
+
+# Jenkins credentials for Swarm client
+jenkins_username: "admin"
+jenkins_password: "admin"  # Should be overridden in inventory or vault
+
+# Swarm client configuration
+jenkins_executors: 2
+jenkins_labels: "swarm"
+jenkins_mode: "normal"

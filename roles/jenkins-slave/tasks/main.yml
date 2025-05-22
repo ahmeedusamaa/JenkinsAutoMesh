@@ -1,0 +1,57 @@
+# tasks file for jenkins-slave
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Java and required packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - openjdk-21-jre
+    - git
+    - curl
+
+- name: Create Jenkins user
+  ansible.builtin.user:
+    name: jenkins
+    shell: /bin/bash
+    home: /home/jenkins
+    createhome: yes
+    state: present
+
+- name: Add the user 'jenkins' to the 'docker' group
+  ansible.builtin.user:
+    name: jenkins
+    groups: docker
+    append: yes
+
+- name: Create Jenkins workspace directory
+  ansible.builtin.file:
+    path: /workspace
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: '0755'
+
+- name: Download Swarm client from GitHub
+  ansible.builtin.get_url:
+    url: https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/3.44/swarm-client-3.44.jar
+    dest: /home/jenkins/swarm-client.jar
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+
+- name: Create Jenkins Swarm systemd service
+  ansible.builtin.template:
+    src: swarm.service.j2
+    dest: /etc/systemd/system/jenkins-swarm.service
+    mode: '0644'
+  notify: Reload systemd
+
+- name: Start and enable Swarm service
+  ansible.builtin.systemd:
+    name: jenkins-swarm
+    state: started
+    enabled: yes
+    daemon_reload: yes  

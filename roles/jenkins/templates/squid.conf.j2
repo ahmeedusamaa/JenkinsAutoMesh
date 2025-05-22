@@ -1,0 +1,8 @@
+http_port 3128
+
+# Allow access from slave host
+acl slave_network src {{ hostvars[groups['slave'][0]]['ansible_host'] }}/32
+http_access allow slave_network
+
+# Deny all other access
+http_access deny all 

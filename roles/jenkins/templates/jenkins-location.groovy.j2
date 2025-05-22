@@ -1,0 +1,5 @@
+import jenkins.model.JenkinsLocationConfiguration
+
+def jenkinsLocationConfiguration = JenkinsLocationConfiguration.get()
+jenkinsLocationConfiguration.setUrl("http://{{ ansible_host }}:8080/")
+jenkinsLocationConfiguration.save() 
